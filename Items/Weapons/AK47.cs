@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
+using Terraria.Audio;
 using Terraria.ModLoader;
 
 namespace JollyTest.Items.Weapons
@@ -21,8 +22,14 @@ namespace JollyTest.Items.Weapons
         }
         public override void SetDefaults()
         {
-            Item.width = 83;
-            Item.height = 31;
+            SoundStyle AK47Sound = new SoundStyle($"{nameof(JollyTest)}/Sounds/Weapons/AK47")
+            {
+                Volume = 0.2f,
+                PitchVariance = 0.2f,
+                MaxInstances = 3,
+            };
+            Item.width = 154;
+            Item.height = 51;
             Item.scale = 0.5f;
             Item.rare = ItemRarityID.LightRed;
             Item.useTime = 10;
@@ -31,6 +38,7 @@ namespace JollyTest.Items.Weapons
             Item.autoReuse = true;
             Item.DamageType = DamageClass.Ranged;
             Item.damage = 53;
+            Item.UseSound = AK47Sound;
             Item.knockBack = 5f;
             Item.noMelee = true;
             Item.shoot = ProjectileID.PurificationPowder; // I LOVE TERRARIA
@@ -40,6 +48,16 @@ namespace JollyTest.Items.Weapons
         public override Vector2? HoldoutOffset()
         {
             return new Vector2(-50f, 0f);
+        }
+        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
+        {
+            Vector2 muzzleOffset = Vector2.Normalize(velocity) * 5f;
+            if (Collision.CanHit(position, 0, 0, position + muzzleOffset, 0, 0))
+            {
+                
+                position.X += muzzleOffset.X;
+                position.Y += muzzleOffset.Y;
+            }
         }
     }
 }
